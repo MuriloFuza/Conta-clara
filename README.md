@@ -1,34 +1,32 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# UNIR Conta Clara
 
-## Getting Started
+UNIR Conta Clara é um mini app web de finanças desenvolvido especialmente para estudantes da UNIR (Universidade Federal de Rondônia) que desejam manter suas finanças pessoais organizadas. Com o UNIR Conta Clara, você pode facilmente registrar suas entradas e saídas de dinheiro em reais, além de acompanhar um dashboard intuitivo que apresenta uma visão clara dos seus gastos. Com recursos simples e eficientes, o UNIR Conta Clara permite que você tenha um controle total sobre suas finanças, ajudando a tomar decisões inteligentes e alcançar uma vida financeira equilibrada. Mantenha suas finanças em ordem enquanto se concentra nos seus estudos com o UNIR Conta Clara.
 
-First, run the development server:
+## Casos de Uso
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+- Cadastrar uma nova transação
+  - Campos necessários
+    - ID (UUID)
+    - Descrição (Text)
+    - Valor (Integer (centavos))
+    - Tipo (Débito ou Crédito)
+    - Data da Transação (Timestamp)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Recuperar todas as transações
+  - Ordenar por data da transação mais recente
+  - Ordenar por valor
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Recuperar transações de um mês específico
+  - Ordenar por data da transação mais recente
+  - Ordenar por valor
+  - Retornar saldo
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- Deletar uma transação
+  - Recuperar pelo ID
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- Atualizar transação (desafio)
+  - Recuperar por ID
+  - Campos atualizáveis
+    - Descrição (Text)
+    - Valor (Integer (centavos))
+    - Tipo (Débito ou Crédito)
