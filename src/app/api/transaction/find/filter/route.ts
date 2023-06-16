@@ -1,9 +1,16 @@
 import { prisma } from '@/app/api/_base'
 import { NextRequest, NextResponse } from 'next/server'
+import { CalculateBalance } from './calculateBalance'
+import { SortAction } from './sortAction'
+
+type OrderBy = 'asc' | 'desc'
+type SortBy = 'data' | 'value'
 
 export async function GET(request: NextRequest) {
   try {
     const month = request.nextUrl.searchParams.get('month')
+    const sort = request.nextUrl.searchParams.get('sort') as SortBy
+    const order = request.nextUrl.searchParams.get('order') as OrderBy
 
     if (month) {
       const targetMonth = new Date()
@@ -22,8 +29,6 @@ export async function GET(request: NextRequest) {
         0,
       )
 
-      console.log(startOfMonth, endOfMonth)
-
       const listFiltered = await prisma.transaction.findMany({
         where: {
           transaction_date: {
@@ -32,12 +37,25 @@ export async function GET(request: NextRequest) {
           },
         },
       })
-      console.log(listFiltered)
+
+      const calculatedBalance = CalculateBalance(listFiltered)
+
+      let listReturn = []
+      if (sort && order) {
+        listReturn = SortAction(sort, order, listFiltered)
+      } else {
+        listReturn = listFiltered
+      }
+      const listSorted = SortAction(sort, order, listFiltered)
+      console.log(listSorted)
 
       return NextResponse.json({
         data: {
           status: 'success',
-          object: listFiltered,
+          object: {
+            balance: calculatedBalance,
+            list: listReturn,
+          },
         },
       })
     }

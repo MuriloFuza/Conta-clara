@@ -3,7 +3,11 @@ import { NextResponse } from 'next/server'
 
 export async function GET() {
   try {
-    const listAllTransactions = await prisma.transaction.findMany({})
+    const listAllTransactions = await prisma.transaction.findMany({
+      orderBy: {
+        transaction_date: 'desc',
+      },
+    })
 
     return NextResponse.json({
       data: {
