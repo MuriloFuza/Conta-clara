@@ -5,28 +5,31 @@ UNIR Conta Clara é um mini app web de finanças desenvolvido especialmente para
 ## Casos de Uso
 
 - Cadastrar uma nova transação
+
   - Campos necessários
     - ID (UUID)
     - Descrição (Text)
     - Valor (Integer (centavos))
     - Tipo (Débito ou Crédito)
     - Data da Transação (Timestamp)
-
 - Recuperar todas as transações
+
   - Ordenar por data da transação mais recente
   - Ordenar por valor
-
 - Recuperar transações de um mês específico
+
   - Ordenar por data da transação mais recente
   - Ordenar por valor
   - Retornar saldo
-
 - Deletar uma transação
-  - Recuperar pelo ID
 
+  - Recuperar pelo ID
 - Atualizar transação (desafio)
+
   - Recuperar por ID
   - Campos atualizáveis
     - Descrição (Text)
     - Valor (Integer (centavos))
     - Tipo (Débito ou Crédito)
+
+## Modelo documentação

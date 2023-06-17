@@ -1,20 +1,13 @@
 import { db } from '@/libs/prisma'
 import { NextRequest, NextResponse } from 'next/server'
 
-type SortValue = 'asc' | 'desc'
-
 export async function GET(request: NextRequest) {
   try {
-    const sort = request.nextUrl.searchParams.get('sort') as SortValue
-
-    let listAllTransactions
-    if (sort) {
-      listAllTransactions = await db.transaction.findMany({
-        orderBy: {
-          value: sort,
-        },
-      })
-    }
+    const listAllTransactions = await db.transaction.findMany({
+      orderBy: {
+        value: 'desc',
+      },
+    })
 
     return NextResponse.json(
       {

@@ -1,0 +1,46 @@
+Essa rota tem como responsabilidade...
+
+## Documentação da API
+
+```http
+  POST /transaction/...
+```
+
+### Query (Obrigatório)
+
+| Parâmetro   | Tipo       | Descrição                                   |
+| :---------- | :------------ | :--------------------------------- |
+| `...` | `...` | **Obrigatório** descrição... | 
+
+### Body (Obrigatório) - JSON
+
+| Parâmetro   | Tipo       | Descrição                                   |
+| :---------- | :------------ | :--------------------------------- |
+| `...` | `...` | **Obrigatório** descrição... | 
+
+
+### Status Code (Retorno da requisição)
+
+| Parâmetro   | Tipo       | Descrição                                   |
+| :---------- | :------------ | :--------------------------------- |
+| `200`      | `success` | sucesso na requisição|
+|`400`| `error`| mensagem de erro no corpo da resposta - JSON|
+|`500`| `server error` | erro interno do servidor|
+
+#### Retorno 200
+
+```JSON
+{
+  ...
+}
+
+```
+
+#### Retorno 400
+
+```JSON
+{
+	...
+}
+
+```
