@@ -6,16 +6,19 @@ export async function PUT(request: NextRequest) {
   const { description, value, type } = await request.json()
 
   if (type !== 'debit' && type !== 'credit') {
-    return NextResponse.json({
-      data: {
-        status: 'error',
-        error: 'type value is invalid our empty',
-        object: {
-          transactionId: id,
-          updated: 'false',
+    return NextResponse.json(
+      {
+        data: {
+          status: 'error',
+          error: 'type value is invalid our empty',
+          object: {
+            transactionId: id,
+            updated: 'false',
+          },
         },
       },
-    })
+      { status: 400 },
+    )
   }
 
   try {
@@ -38,26 +41,32 @@ export async function PUT(request: NextRequest) {
       },
     })
 
-    return NextResponse.json({
-      data: {
-        status: 'success',
-        object: {
-          transactionId: id,
-          transaction: transactionUpdated,
-          updated: 'true',
+    return NextResponse.json(
+      {
+        data: {
+          status: 'success',
+          object: {
+            transactionId: id,
+            transaction: transactionUpdated,
+            updated: 'true',
+          },
         },
       },
-    })
+      { status: 200 },
+    )
   } catch (err) {
-    return NextResponse.json({
-      data: {
-        status: 'error',
-        error: err,
-        object: {
-          transactionId: id,
-          updated: 'false',
+    return NextResponse.json(
+      {
+        data: {
+          status: 'error',
+          error: err,
+          object: {
+            transactionId: id,
+            updated: 'false',
+          },
         },
       },
-    })
+      { status: 400 },
+    )
   }
 }

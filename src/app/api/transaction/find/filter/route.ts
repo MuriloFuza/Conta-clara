@@ -49,23 +49,29 @@ export async function GET(request: NextRequest) {
       const listSorted = SortAction(sort, order, listFiltered)
       console.log(listSorted)
 
-      return NextResponse.json({
-        data: {
-          status: 'success',
-          object: {
-            balance: calculatedBalance,
-            list: listReturn,
+      return NextResponse.json(
+        {
+          data: {
+            status: 'success',
+            object: {
+              balance: calculatedBalance,
+              list: listReturn,
+            },
           },
         },
-      })
+        { status: 200 },
+      )
     }
   } catch (err) {
     console.log(err)
-    return NextResponse.json({
-      data: {
-        status: 'error',
-        error: err,
+    return NextResponse.json(
+      {
+        data: {
+          status: 'error',
+          error: err,
+        },
       },
-    })
+      { status: 400 },
+    )
   }
 }

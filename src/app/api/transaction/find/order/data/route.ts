@@ -9,16 +9,22 @@ export async function GET() {
       },
     })
 
-    return NextResponse.json({
-      data: {
-        status: 'success',
-        listAllTransactions,
+    return NextResponse.json(
+      {
+        data: {
+          status: 'success',
+          listAllTransactions,
+        },
       },
-    })
+      { status: 200 },
+    )
   } catch (err) {
     console.log(err)
-    return NextResponse.json({
-      data: { status: 'failed', error: err },
-    })
+    return NextResponse.json(
+      {
+        data: { status: 'failed', error: err },
+      },
+      { status: 400 },
+    )
   }
 }

@@ -11,25 +11,31 @@ export async function DELETE(request: NextRequest) {
       },
     })
 
-    return NextResponse.json({
-      data: {
-        status: 'success',
-        object: {
-          transactionId: id,
-          deleted: 'true',
+    return NextResponse.json(
+      {
+        data: {
+          status: 'success',
+          object: {
+            transactionId: id,
+            deleted: 'true',
+          },
         },
       },
-    })
+      { status: 200 },
+    )
   } catch (err) {
-    return NextResponse.json({
-      data: {
-        status: 'error',
-        error: err,
-        object: {
-          transactionId: id,
-          deleted: 'false',
+    return NextResponse.json(
+      {
+        data: {
+          status: 'error',
+          error: err,
+          object: {
+            transactionId: id,
+            deleted: 'false',
+          },
         },
       },
-    })
+      { status: 400 },
+    )
   }
 }

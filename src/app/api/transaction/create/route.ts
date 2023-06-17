@@ -12,13 +12,19 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    return NextResponse.json({
-      data: { status: 'created', object: transaction },
-    })
+    return NextResponse.json(
+      {
+        data: { status: 'created', object: transaction },
+      },
+      { status: 201 },
+    )
   } catch (err) {
     console.log(err)
-    return NextResponse.json({
-      data: { status: 'failed', error: err },
-    })
+    return NextResponse.json(
+      {
+        data: { status: 'failed', error: err },
+      },
+      { status: 400 },
+    )
   }
 }
