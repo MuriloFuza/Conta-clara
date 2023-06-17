@@ -1,7 +1,7 @@
-import { prisma } from '@/app/api/_base'
 import { NextRequest, NextResponse } from 'next/server'
 import { CalculateBalance } from './calculateBalance'
 import { SortAction } from './sortAction'
+import { db } from '@/libs/prisma'
 
 type OrderBy = 'asc' | 'desc'
 type SortBy = 'data' | 'value'
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
         0,
       )
 
-      const listFiltered = await prisma.transaction.findMany({
+      const listFiltered = await db.transaction.findMany({
         where: {
           transaction_date: {
             gte: startOfMonth,

@@ -1,9 +1,9 @@
-import { prisma } from '@/app/api/_base'
+import { db } from '@/libs/prisma'
 import { NextResponse } from 'next/server'
 
 export async function GET() {
   try {
-    const listAllTransactions = await prisma.transaction.findMany({
+    const listAllTransactions = await db.transaction.findMany({
       orderBy: {
         transaction_date: 'desc',
       },
