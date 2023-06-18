@@ -111,8 +111,8 @@ export function MonthGraph() {
           <YAxis
             tickFormatter={(value) => (value / 100) as unknown as string}
           />
-          <Line type="monotone" dataKey="debit" stroke="#8884d8" />
-          <Line type="monotone" dataKey="credit" stroke="#82ca9d" />
+          <Line type="monotone" dataKey="debit" stroke="#f87171" />
+          <Line type="monotone" dataKey="credit" stroke="#4ade80" />
           <Tooltip
             contentStyle={{
               backgroundColor: '#171717',
