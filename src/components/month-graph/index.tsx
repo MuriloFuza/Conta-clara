@@ -99,7 +99,7 @@ export function MonthGraph() {
           ))}
         </select>
       </div>
-      <ResponsiveContainer width="100%" height="100%">
+      <ResponsiveContainer width="100%" height={350}>
         <LineChart data={monthData}>
           {/* @ts-ignore */}
           <XAxis
