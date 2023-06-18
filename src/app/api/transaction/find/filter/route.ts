@@ -36,6 +36,9 @@ export async function GET(request: NextRequest) {
             lte: endOfMonth,
           },
         },
+        orderBy: {
+          transaction_date: 'desc',
+        },
       })
 
       const calculatedBalance = CalculateBalance(listFiltered)
@@ -46,8 +49,6 @@ export async function GET(request: NextRequest) {
       } else {
         listReturn = listFiltered
       }
-      const listSorted = SortAction(sort, order, listFiltered)
-      console.log(listSorted)
 
       return NextResponse.json(
         {
