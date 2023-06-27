@@ -22,7 +22,6 @@ interface MonthGraphInfo {
 
 export function MonthGraph() {
   const [selectedMonth, setSelectedMonth] = useState(6)
-  const [fetchStatus, setFetchStatus] = useState('')
   const [monthData, setMonthData] = useState<MonthGraphInfo[]>([])
 
   const fetchTransactions = useCallback(() => {
@@ -39,8 +38,6 @@ export function MonthGraph() {
         } = transactionResponse
 
         if (data.status === 'success') {
-          setFetchStatus('success')
-
           const newMonthData = data.object.list.reduce(
             (accumulator, transaction) => {
               const existingDayIndex = accumulator.findIndex((item) =>
@@ -73,8 +70,6 @@ export function MonthGraph() {
           )
 
           setMonthData(newMonthData)
-        } else {
-          setFetchStatus('error')
         }
       })
   }, [selectedMonth])
@@ -86,7 +81,6 @@ export function MonthGraph() {
   return (
     <div className="space-y-2">
       <div className="flex flex-col gap-1">
-        <label>Relatório por mês</label>
         <select
           className="h-10 capitalize focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-900 focus:ring-blue-600 rounded-lg p-2 pr-8 border-0 bg-neutral-950 outline-none"
           value={selectedMonth}
