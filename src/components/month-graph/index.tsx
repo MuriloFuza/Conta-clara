@@ -1,6 +1,7 @@
 'use client'
 
 import { api } from '@/libs/api'
+import { useAuth } from '@clerk/nextjs'
 import { format, isSameDay } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { useCallback, useEffect, useState } from 'react'
@@ -23,6 +24,7 @@ interface MonthGraphInfo {
 export function MonthGraph() {
   const [selectedMonth, setSelectedMonth] = useState(6)
   const [monthData, setMonthData] = useState<MonthGraphInfo[]>([])
+  const { userId } = useAuth()
 
   const fetchTransactions = useCallback(() => {
     api
@@ -30,6 +32,7 @@ export function MonthGraph() {
       .get<FilteredReturn>('/find/filter', {
         params: {
           month: selectedMonth,
+          userId,
         },
       })
       .then((transactionResponse) => {

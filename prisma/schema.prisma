@@ -16,4 +16,5 @@ model Transaction {
   value            Int
   type             String
   transaction_date DateTime @default(now())
+  userId           String
 }

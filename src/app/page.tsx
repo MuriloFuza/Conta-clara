@@ -1,6 +1,8 @@
 'use client'
 import { NewTransactionForm } from '@/components/new-transaction-form'
+import { SelectInput } from '@/components/select'
 import { api } from '@/libs/api'
+import { useAuth } from '@clerk/nextjs'
 import { Transaction } from '@prisma/client'
 import { format, getMonth, formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
@@ -11,6 +13,23 @@ export default function Home() {
   const [fetchStatus, setFetchStatus] = useState('loading')
   const currentMonthName = format(new Date(), 'LLLL', { locale: ptBR }) // Junho
   const currentMonth = getMonth(new Date()) + 1 // 6
+  const { userId, isLoaded } = useAuth()
+  const [month, setMonth] = useState(
+    `${currentMonthName.charAt(0).toUpperCase() + currentMonthName.slice(1)}`,
+  )
+  const monthList = [
+    'Janeiro',
+    'Fevereiro',
+    'Março',
+    'Abril',
+    'Junho',
+    'Julho',
+    'Agosto',
+    'Setembro',
+    'Outubro',
+    'Novembro',
+    'Dezembro',
+  ]
 
   // DESAFIO: Impossibilitar a inserção de transações futuras (que são maiores que o dia de hoje)
   const fetchTransactions = useCallback(() => {
@@ -19,6 +38,7 @@ export default function Home() {
       .get<FilteredReturn>('/find/filter', {
         params: {
           month: currentMonth,
+          userId,
         },
       })
       .then((transactionResponse) => {
@@ -40,14 +60,28 @@ export default function Home() {
     fetchTransactions()
   }, [fetchTransactions])
 
+  useEffect(() => {
+    setMonth(month)
+  }, [month])
+
   return (
     <div className="flex flex-1 flex-col space-y-2 overflow-hidden">
-      <NewTransactionForm fetchTransactions={fetchTransactions} />
+      <NewTransactionForm
+        fetchTransactions={fetchTransactions}
+        userId={userId || ''}
+      />
 
-      <h1 className="capitalize font-bold text-xl">{currentMonthName}</h1>
+      <h1 className="capitalize font-bold text-xl">{month}</h1>
+      <SelectInput
+        label="Mês"
+        placeholder="Mês"
+        selectedValue={month}
+        values={monthList}
+        onChange={(val) => setMonth(val)}
+      />
 
       <div className="flex flex-1 h-full overflow-auto">
-        {fetchStatus === 'success' ? (
+        {fetchStatus === 'success' && isLoaded === true ? (
           <table className="w-full flex-1 border-collapse min-w-[600px]">
             <thead className="sticky top-0">
               <tr>
@@ -100,7 +134,7 @@ export default function Home() {
             </tbody>
           </table>
         ) : (
-          <h1>deu errado</h1>
+          <h1>Ops... Algo deu errado!</h1>
         )}
       </div>
     </div>

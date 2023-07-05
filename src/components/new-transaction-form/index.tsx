@@ -1,15 +1,17 @@
 'use client'
 import { api } from '@/libs/api'
 import { Plus } from 'lucide-react'
-import { FormEvent } from 'react'
+import { FormEvent, useState } from 'react'
 import InputMask from 'react-input-mask'
 
 interface NewTransactionFormProps {
   fetchTransactions: () => void
+  userId: string
 }
 
 export function NewTransactionForm({
   fetchTransactions,
+  userId,
 }: NewTransactionFormProps) {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -40,6 +42,7 @@ export function NewTransactionForm({
         description,
         type,
         value: Number(newValue),
+        userId,
         transaction_date: new Date(date as string),
       })
 
@@ -49,6 +52,26 @@ export function NewTransactionForm({
     } catch {
       throw new Error()
     }
+  }
+
+  const [formattedValue, setFormattedValue] = useState('')
+
+  const handleChangeMoney = (event) => {
+    const { value } = event.target
+    const cleanedValue = value.replace(/\D/g, '') // Remove caracteres não numéricos
+    const formatted = formatCurrency(cleanedValue)
+    setFormattedValue(formatted)
+  }
+
+  const formatCurrency = (value) => {
+    const options = {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }
+    const amount = Number(value) / 100
+    return amount.toLocaleString('pt-BR', options)
   }
 
   return (
@@ -75,18 +98,15 @@ export function NewTransactionForm({
       </div>
       <div className="flex flex-col gap-1 w-32">
         <label>Valor</label>
-        <InputMask mask="R$ 99.999,99" alwaysShowMask>
-          {/* @ts-ignore */}
-          {(inputProps: any) => (
-            <input
-              {...inputProps}
-              className="h-10 focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-900 focus:ring-blue-600 rounded-lg p-2 bg-neutral-950 outline-none"
-              placeholder="Ex.: 1,43"
-              id="value"
-              name="value"
-            />
-          )}
-        </InputMask>
+        <input
+          type="text"
+          value={formattedValue}
+          onChange={handleChangeMoney}
+          placeholder="R$ 0,00"
+          className="h-10 focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-900 focus:ring-blue-600 rounded-lg p-2 bg-neutral-950 outline-none"
+          id="value"
+          name="value"
+        />
       </div>
       <div className="flex flex-col gap-1 w-56">
         <label>Data</label>

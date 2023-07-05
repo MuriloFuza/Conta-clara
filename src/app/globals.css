@@ -12,3 +12,7 @@
 input {
   color-scheme: dark;
 }
+
+.rtl {
+  direction: rtl;
+}

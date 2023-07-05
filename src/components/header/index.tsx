@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { Home, Landmark, PieChart } from 'lucide-react'
 import { usePathname } from 'next/navigation'
+import { UserButton } from '@clerk/nextjs'
 
 export function Header() {
   const pathname = usePathname()
@@ -12,7 +13,8 @@ export function Header() {
     <div className="flex justify-between items-center p-3">
       <div className="flex gap-x-2">
         <Landmark size={28} />
-        <h1 className="font-bold text-2xl">UNIR Conta Clara</h1>
+        <h1 className="font-bold text-2xl">Conta Clara</h1>
+        <UserButton afterSignOutUrl="/" />
       </div>
       <nav className="flex gap-x-2">
         <Link

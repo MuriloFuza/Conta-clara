@@ -4,7 +4,8 @@ CREATE TABLE "Transaction" (
     "description" TEXT NOT NULL,
     "value" INTEGER NOT NULL,
     "type" TEXT NOT NULL,
-    "transaction_date" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    "transaction_date" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "userId" TEXT NOT NULL
 );
 
 -- CreateIndex

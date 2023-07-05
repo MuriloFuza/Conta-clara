@@ -9,7 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@clerk/localizations": "^1.22.0",
+    "@clerk/nextjs": "^4.21.14",
     "@prisma/client": "^4.15.0",
+    "@radix-ui/react-select": "^1.2.2",
     "@types/node-fetch": "^2.6.4",
     "axios": "^1.4.0",
     "date-fns": "^2.30.0",

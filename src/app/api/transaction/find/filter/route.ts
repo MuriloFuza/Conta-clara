@@ -11,6 +11,11 @@ export async function GET(request: NextRequest) {
     const month = request.nextUrl.searchParams.get('month')
     const sort = request.nextUrl.searchParams.get('sort') as SortBy
     const order = request.nextUrl.searchParams.get('order') as OrderBy
+    const userId = request.nextUrl.searchParams.get('userId')
+
+    if (!userId) {
+      throw new Error('userId not received!')
+    }
 
     if (month) {
       const targetMonth = new Date()
@@ -35,6 +40,7 @@ export async function GET(request: NextRequest) {
             gte: startOfMonth,
             lte: endOfMonth,
           },
+          userId,
         },
         orderBy: {
           transaction_date: 'desc',
