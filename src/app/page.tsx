@@ -4,24 +4,27 @@ import { SelectInput } from '@/components/select'
 import { api } from '@/libs/api'
 import { useAuth } from '@clerk/nextjs'
 import { Transaction } from '@prisma/client'
-import { format, getMonth, formatDistanceToNow } from 'date-fns'
+import { format, formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { useCallback, useEffect, useState } from 'react'
 
 export default function Home() {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [fetchStatus, setFetchStatus] = useState('loading')
+  const [balance, setBalance] = useState('')
   const currentMonthName = format(new Date(), 'LLLL', { locale: ptBR }) // Junho
-  const currentMonth = getMonth(new Date()) + 1 // 6
   const { userId, isLoaded } = useAuth()
   const [month, setMonth] = useState(
     `${currentMonthName.charAt(0).toUpperCase() + currentMonthName.slice(1)}`,
   )
+  const [mode, setMode] = useState('Data')
+  const [order, setOrder] = useState('Decrescente')
   const monthList = [
     'Janeiro',
     'Fevereiro',
     'Março',
     'Abril',
+    'Maio',
     'Junho',
     'Julho',
     'Agosto',
@@ -30,14 +33,18 @@ export default function Home() {
     'Novembro',
     'Dezembro',
   ]
+  const modeList = ['Data', 'Valor']
+  const orderList = ['Crescente', 'Decrescente']
 
-  // DESAFIO: Impossibilitar a inserção de transações futuras (que são maiores que o dia de hoje)
   const fetchTransactions = useCallback(() => {
+    const monthUsed = monthList.findIndex((mon) => mon === month) + 1
     api
       // eslint-disable-next-line no-undef
       .get<FilteredReturn>('/find/filter', {
         params: {
-          month: currentMonth,
+          month: monthUsed,
+          order: order === 'Crescente' ? 'asc' : 'desc',
+          sort: mode === 'Valor' ? 'value' : 'data',
           userId,
         },
       })
@@ -48,21 +55,19 @@ export default function Home() {
 
         if (data.status === 'success') {
           setTransactions(data.object.list)
+          setBalance(data.object.balance.toString())
           setFetchStatus('success')
         } else {
           setTransactions([])
           setFetchStatus('error')
         }
       })
-  }, [currentMonth])
+      .catch(() => setTransactions([]))
+  }, [month, order, mode])
 
   useEffect(() => {
     fetchTransactions()
   }, [fetchTransactions])
-
-  useEffect(() => {
-    setMonth(month)
-  }, [month])
 
   return (
     <div className="flex flex-1 flex-col space-y-2 overflow-hidden">
@@ -71,14 +76,51 @@ export default function Home() {
         userId={userId || ''}
       />
 
-      <h1 className="capitalize font-bold text-xl">{month}</h1>
-      <SelectInput
-        label="Mês"
-        placeholder="Mês"
-        selectedValue={month}
-        values={monthList}
-        onChange={(val) => setMonth(val)}
-      />
+      <div className=" flex flex-col gap-x-8">
+        <div className="flex flex-col">
+          <h1 className="capitalize font-bold text-xl">{month}</h1>
+
+          <div className="flex flex-row gap-x-2">
+            <h3 className={`capitalize font-semibold text-lg `}>
+              Balanço mensal:
+            </h3>
+            <h3
+              className={`text-lg font-bold ${
+                Number(balance) < 0 ? 'text-red-600' : 'text-green-600'
+              }`}
+            >
+              R$ {Number(balance) / 100}
+            </h3>
+          </div>
+        </div>
+
+        <div className="pt-3 flex flex-col">
+          <h1 className="capitalize font-bold text-xl">Filtragem</h1>
+          <div className="flex flex-row  gap-x-3">
+            <SelectInput
+              label="Mês"
+              placeholder="Mês"
+              selectedValue={month}
+              values={monthList}
+              onChange={(val) => setMonth(val)}
+            />
+            <SelectInput
+              label="Ordenar por:"
+              placeholder="Data"
+              selectedValue={mode}
+              values={modeList}
+              onChange={(val) => setMode(val)}
+            />
+            <SelectInput
+              label="Ordem:"
+              placeholder="Decrescente"
+              selectedValue={order}
+              values={orderList}
+              onChange={(val) => setOrder(val)}
+            />
+          </div>
+        </div>
+      </div>
 
       <div className="flex flex-1 h-full overflow-auto">
         {fetchStatus === 'success' && isLoaded === true ? (

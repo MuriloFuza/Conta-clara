@@ -2,7 +2,6 @@
 import { api } from '@/libs/api'
 import { Plus } from 'lucide-react'
 import { FormEvent, useState } from 'react'
-import InputMask from 'react-input-mask'
 
 interface NewTransactionFormProps {
   fetchTransactions: () => void
@@ -17,7 +16,14 @@ export function NewTransactionForm({
     event.preventDefault()
 
     try {
-      const formData = new FormData(event.currentTarget)
+      const form = event.currentTarget
+      const formData = new FormData(form)
+
+      const descriptionInput = form.elements.namedItem(
+        'description',
+      ) as HTMLInputElement
+      const typeSelect = form.elements.namedItem('type') as HTMLSelectElement
+      const dateInput = form.elements.namedItem('date') as HTMLInputElement
 
       const description = formData.get('description')
       const type = formData.get('type')
@@ -38,15 +44,22 @@ export function NewTransactionForm({
         .replace(/[^a-zA-Z0-9]/g, '')
         .replace('R', '')
 
-      await api.post('/create', {
-        description,
-        type,
-        value: Number(newValue),
-        userId,
-        transaction_date: new Date(date as string),
-      })
+      await api
+        .post('/create', {
+          description,
+          type,
+          value: Number(newValue),
+          userId,
+          transaction_date: new Date(date as string),
+        })
+        .then(() => {
+          fetchTransactions()
 
-      fetchTransactions()
+          descriptionInput.value = ''
+          typeSelect.value = ''
+          dateInput.value = ''
+          setFormattedValue('')
+        })
 
       // DESAFIO: Limpar os campos após a inserção
     } catch {
@@ -56,14 +69,14 @@ export function NewTransactionForm({
 
   const [formattedValue, setFormattedValue] = useState('')
 
-  const handleChangeMoney = (event) => {
+  const handleChangeMoney = (event: { target: { value: any } }) => {
     const { value } = event.target
     const cleanedValue = value.replace(/\D/g, '') // Remove caracteres não numéricos
     const formatted = formatCurrency(cleanedValue)
     setFormattedValue(formatted)
   }
 
-  const formatCurrency = (value) => {
+  const formatCurrency = (value: any) => {
     const options = {
       style: 'currency',
       currency: 'BRL',
