@@ -55,6 +55,9 @@ export default function CreditCard() {
                   </th>
                   <th className="bg-neutral-800 text-left leading-7">Limite</th>
                   <th className="bg-neutral-800 text-left leading-7">
+                    Limite disponível
+                  </th>
+                  <th className="bg-neutral-800 text-left leading-7">
                     Vencimento
                   </th>
                   <th className="bg-neutral-800 text-left rounded-tr-lg pr-6 leading-7">
@@ -78,6 +81,7 @@ export default function CreditCard() {
                         signDisplay: 'always',
                       }).format(card.limit / 100)}
                     </td>
+                    <td className="p-1 pr-6 leading-relaxed">0</td>
                     <td className="p-1 pr-6 leading-relaxed items-center">
                       {card.dueDate}
                     </td>

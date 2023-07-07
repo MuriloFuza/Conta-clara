@@ -1,6 +1,12 @@
 'use client'
 import Link from 'next/link'
-import { Home, Landmark, PieChart, CreditCard } from 'lucide-react'
+import {
+  Home,
+  Landmark,
+  PieChart,
+  CreditCard,
+  CircleDollarSign,
+} from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { UserButton } from '@clerk/nextjs'
 
@@ -10,6 +16,7 @@ export function Header() {
   const isAtHome = pathname === '/'
   const isAtHistory = pathname === '/history'
   const isAtCard = pathname === '/card'
+  const isAtMonthlyExpenses = pathname === '/card/expenses'
 
   return (
     <div className="flex justify-between items-center p-3">
@@ -45,6 +52,15 @@ export function Header() {
           title="Crédito"
         >
           <CreditCard size={24} />
+        </Link>
+        <Link
+          className={`p-2 border-y-2 border-transparent text-neutral-400 hover:text-neutral-200 ${
+            isAtMonthlyExpenses ? 'border-b-blue-500 text-neutral-50' : ''
+          }`}
+          href="/card/expenses"
+          title="Gastos Mensais"
+        >
+          <CircleDollarSign size={24} />
         </Link>
       </nav>
     </div>
