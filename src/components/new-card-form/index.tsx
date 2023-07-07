@@ -3,15 +3,12 @@ import { api } from '@/libs/api'
 import { Plus } from 'lucide-react'
 import { FormEvent, useState } from 'react'
 
-interface NewTransactionFormProps {
-  fetchTransactions: () => void
+interface NewCardFormProps {
+  fetchCards: () => void
   userId: string
 }
 
-export function NewTransactionForm({
-  fetchTransactions,
-  userId,
-}: NewTransactionFormProps) {
+export function NewCardForm({ fetchCards, userId }: NewCardFormProps) {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
@@ -19,21 +16,14 @@ export function NewTransactionForm({
       const form = event.currentTarget
       const formData = new FormData(form)
 
-      const descriptionInput = form.elements.namedItem(
-        'description',
-      ) as HTMLInputElement
-      const typeSelect = form.elements.namedItem('type') as HTMLSelectElement
-      const dateInput = form.elements.namedItem('date') as HTMLInputElement
+      const nameInput = form.elements.namedItem('name') as HTMLInputElement
+      const dateInput = form.elements.namedItem('dueDate') as HTMLInputElement
 
-      const description = formData.get('description')
-      const type = formData.get('type')
+      const name = formData.get('name')
       const value = formData.get('value')
-      const date = formData.get('date')
+      const date = formData.get('dueDate')
 
-      if (!description || !type || !value || !date) {
-        // DESAFIO: Exibir alerta caso alguma das propriedades não existirem
-        // pode ser feito com a API Alert do browser
-        // eslint-disable-next-line no-useless-return
+      if (!name || !value || !date) {
         return
       }
 
@@ -45,23 +35,19 @@ export function NewTransactionForm({
         .replace('R', '')
 
       await api
-        .post('/transaction/create', {
-          description,
-          type,
-          value: Number(newValue),
+        .post('card/create', {
+          name,
+          limit: Number(newValue),
+          dueDate: date,
           userId,
-          transaction_date: new Date(date as string),
         })
         .then(() => {
-          fetchTransactions()
+          fetchCards()
 
-          descriptionInput.value = ''
-          typeSelect.value = ''
+          nameInput.value = ''
           dateInput.value = ''
           setFormattedValue('')
         })
-
-      // DESAFIO: Limpar os campos após a inserção
     } catch {
       throw new Error()
     }
@@ -90,27 +76,16 @@ export function NewTransactionForm({
   return (
     <form className="flex gap-x-2 px-2" onSubmit={handleSubmit}>
       <div className="flex flex-col gap-1 flex-1">
-        <label>Descrição</label>
+        <label>Nome</label>
         <input
           className="h-10 focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-900 focus:ring-blue-600 rounded-lg p-2 bg-neutral-950 outline-none"
-          placeholder="Ex.: Caldo de Cana"
-          id="description"
-          name="description"
+          placeholder="Ex.: Cartão Visa 1"
+          id="name"
+          name="name"
         />
       </div>
-      <div className="flex flex-col gap-1">
-        <label>Tipo</label>
-        <select
-          className="h-10 focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-900 focus:ring-blue-600 rounded-lg p-2 pr-8 border-0 bg-neutral-950 outline-none"
-          id="type"
-          name="type"
-        >
-          <option value="credit">Crédito</option>
-          <option value="debit">Débito</option>
-        </select>
-      </div>
       <div className="flex flex-col gap-1 w-32">
-        <label>Valor</label>
+        <label>Limite</label>
         <input
           type="text"
           value={formattedValue}
@@ -121,13 +96,13 @@ export function NewTransactionForm({
           name="value"
         />
       </div>
-      <div className="flex flex-col gap-1 w-56">
-        <label>Data</label>
+      <div className="flex flex-col gap-1 flex-1">
+        <label>Vencimento dia:</label>
         <input
-          className="h-10 focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-900 focus:ring-blue-600 rounded-lg border-0 p-2 bg-neutral-950 outline-none"
-          type="datetime-local"
-          id="date"
-          name="date"
+          className="h-10 focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-900 focus:ring-blue-600 rounded-lg p-2 bg-neutral-950 outline-none"
+          placeholder="Ex.: 28"
+          id="dueDate"
+          name="dueDate"
         />
       </div>
       <button

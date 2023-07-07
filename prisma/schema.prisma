@@ -18,3 +18,23 @@ model Transaction {
   transaction_date DateTime @default(now())
   userId           String
 }
+
+model Card {
+  id              String            @id @unique @default(uuid())
+  name            String
+  limit           Int
+  dueDate         String
+  userId          String
+  MonthlyExpenses MonthlyExpenses[]
+}
+
+model MonthlyExpenses {
+  id              String   @id @unique @default(uuid())
+  descrition      String
+  installments    Int
+  value           Int
+  monthlyInterest Float
+  initialMonth    DateTime @default(now())
+  Card            Card     @relation(fields: [cardId], references: [id])
+  cardId          String
+}

@@ -40,7 +40,7 @@ export default function Home() {
     const monthUsed = monthList.findIndex((mon) => mon === month) + 1
     api
       // eslint-disable-next-line no-undef
-      .get<FilteredReturn>('/find/filter', {
+      .get<FilteredReturn>('/transaction/find/filter', {
         params: {
           month: monthUsed,
           order: order === 'Crescente' ? 'asc' : 'desc',
