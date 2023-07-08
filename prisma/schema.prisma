@@ -25,6 +25,7 @@ model Card {
   limit           Int
   dueDate         String
   userId          String
+  statusInvoice   String            @default("open")
   MonthlyExpenses MonthlyExpenses[]
 }
 

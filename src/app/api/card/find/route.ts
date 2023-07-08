@@ -5,21 +5,54 @@ export async function GET(request: NextRequest) {
   const userId = request.nextUrl.searchParams.get('userId')
 
   try {
-    let list = await db.card.findMany({
+    const list = await db.card.findMany({
       where: {
         userId: userId?.toString(),
       },
     })
 
+    let listReturn: any[] = []
+
     if (list.length < 1) {
-      list = []
+      listReturn = []
+    } else {
+      await Promise.all(
+        list.map(async (card) => {
+          const monthlyExpenses = await db.monthlyExpenses.findMany({
+            where: {
+              cardId: card.id,
+            },
+          })
+
+          let finalValue = 0
+          monthlyExpenses.forEach((expense) => {
+            finalValue += expense.value
+          })
+
+          const day = new Date()
+
+          listReturn.push({
+            id: card.id,
+            name: card.name,
+            limit: card.limit,
+            dueDate: card.dueDate,
+            statusInvoice:
+              Number(card.dueDate) <= day.getDate()
+                ? 'closed'
+                : card.statusInvoice,
+            availableLimit: card.limit - finalValue,
+            invoice: finalValue,
+            userId: card.userId,
+          })
+        }),
+      )
     }
 
     return NextResponse.json(
       {
         data: {
           status: 'success',
-          object: list,
+          object: listReturn,
         },
       },
       {

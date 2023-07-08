@@ -16,12 +16,22 @@ export async function POST(request: NextRequest) {
       throw new Error('card.AlreadyExists')
     }
 
+    const day = new Date()
+    let statusInvoice = ''
+
+    if (dueDate >= day.getDate()) {
+      statusInvoice = 'closed'
+    } else {
+      statusInvoice = 'open'
+    }
+
     await db.card.create({
       data: {
         name,
         userId,
         dueDate,
         limit,
+        statusInvoice,
       },
     })
 

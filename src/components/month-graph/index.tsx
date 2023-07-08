@@ -29,7 +29,7 @@ export function MonthGraph() {
   const fetchTransactions = useCallback(() => {
     api
       // eslint-disable-next-line no-undef
-      .get<FilteredReturn>('/find/filter', {
+      .get<FilteredReturn>('/transaction/find/filter', {
         params: {
           month: selectedMonth,
           userId,

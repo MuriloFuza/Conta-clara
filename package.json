@@ -11,17 +11,23 @@
   "dependencies": {
     "@clerk/localizations": "^1.22.0",
     "@clerk/nextjs": "^4.21.14",
+    "@hookform/resolvers": "^3.1.1",
     "@prisma/client": "^4.15.0",
     "@radix-ui/react-select": "^1.2.2",
     "@types/node-fetch": "^2.6.4",
     "axios": "^1.4.0",
+    "clsx": "^1.2.1",
     "date-fns": "^2.30.0",
+    "dayjs": "^1.11.9",
     "lucide-react": "^0.233.0",
     "next": "13.4.6",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-hook-form": "^7.45.1",
     "react-input-mask": "^2.0.4",
-    "recharts": "^2.7.1"
+    "react-tailwindcss-datepicker": "^1.6.3",
+    "recharts": "^2.7.1",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@rocketseat/eslint-config": "^1.2.0",
