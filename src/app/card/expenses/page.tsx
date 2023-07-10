@@ -1,16 +1,37 @@
 'use client'
+import ExpensesTable from '@/components/expenses-table'
 import ExpensesForm from '@/components/new-expense-form'
 import { SelectKeyInput } from '@/components/select-key'
 import { api } from '@/libs/api'
 import { useAuth } from '@clerk/nextjs'
+import { MonthlyExpenses } from '@prisma/client'
 import { useEffect, useState } from 'react'
 
 export default function Expenses() {
-  const { userId } = useAuth()
+  const { userId, isLoaded } = useAuth()
   const [cards, setCards] = useState<{
     [key: string]: string
   }>({})
   const [card, setCard] = useState('')
+  const [expenses, setExpenses] = useState<MonthlyExpenses[]>([])
+  const [statusFetchExpenses, setStatusFetchExpenses] = useState(false)
+
+  const fetchExpenses = (userId: string, card: string) => {
+    if (card !== '') {
+      api
+        .get('/card/expenses/find', {
+          params: {
+            userId,
+            cardId: card,
+          },
+        })
+        .then((response) => {
+          const { data } = response
+          setExpenses(data.object)
+          setStatusFetchExpenses(true)
+        })
+    }
+  }
 
   // Load Cards
   useEffect(() => {
@@ -41,7 +62,10 @@ export default function Expenses() {
       .catch(() => setCards({}))
   }, [])
 
-  useEffect(() => {}, [card])
+  // Load Expenses
+  useEffect(() => {
+    fetchExpenses(userId || '', card)
+  }, [card])
 
   return (
     <div className="space-y-4">
@@ -55,7 +79,21 @@ export default function Expenses() {
           onChange={(val) => setCard(val)}
         />
       </div>
-      {card !== '' ? <ExpensesForm /> : null}
+      {card !== '' ? (
+        <ExpensesForm
+          fetchExpenses={fetchExpenses}
+          userId={userId || ''}
+          card={card}
+        />
+      ) : null}
+      <ExpensesTable
+        expenses={expenses}
+        fetchStatus={statusFetchExpenses}
+        fetchExpenses={fetchExpenses}
+        userId={userId || ''}
+        card={card}
+        isLoaded={isLoaded}
+      />
     </div>
   )
 }

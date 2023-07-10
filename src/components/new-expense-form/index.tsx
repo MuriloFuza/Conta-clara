@@ -3,24 +3,48 @@ import {
   CreateExpensesSchemaType,
 } from '@/schemas/createExpensesInCard.zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
+import { SubmitHandler, useForm } from 'react-hook-form'
 import { Input } from '../input'
 import { RangeDatePicker } from '../date-picker'
 import dayjs from 'dayjs'
+import { Plus } from 'lucide-react'
+import { api } from '@/libs/api'
 
-export default function ExpensesForm() {
-  // handleSubmit,
+interface ExpensesFormProps {
+  fetchExpenses: (userId: string, card: string) => void
+  userId: string
+  card: string
+}
+
+export default function ExpensesForm({
+  fetchExpenses,
+  userId,
+  card,
+}: ExpensesFormProps) {
   const {
     register,
     formState: { errors },
     watch,
     setValue,
+    handleSubmit,
   } = useForm<CreateExpensesSchemaType>({
     resolver: zodResolver(CreateExpensesSchema),
+    defaultValues: {
+      cardId: card,
+    },
   })
+  const handleCreateExpense: SubmitHandler<CreateExpensesSchemaType> = async (
+    data,
+  ) => {
+    await api.post('/card/expenses/create', data)
+    fetchExpenses(userId, card)
+  }
 
   return (
-    <div className="flex flex-row gap-x-4 ">
+    <form
+      onSubmit={handleSubmit(handleCreateExpense)}
+      className="flex flex-row gap-x-4 "
+    >
       <Input
         label="Descrição"
         error={errors.description}
@@ -56,27 +80,23 @@ export default function ExpensesForm() {
           endDate: watch(`initialMonth`) ?? new Date(),
         }}
         onChange={(value) => {
-          if (value) {
-            setValue(
-              'initialMonth',
-              dayjs(value.startDate)
-                .set('hours', 0)
-                .set('minutes', 0)
-                .set('seconds', 0)
-                .toISOString(),
-            )
-            setValue(
-              'initialMonth',
-              dayjs(value.endDate)
-                .set('hours', 23)
-                .set('minutes', 59)
-                .set('seconds', 59)
-                .subtract(4, 'hours')
-                .toISOString(),
-            )
-          }
+          setValue(
+            'initialMonth',
+            dayjs(value?.startDate)
+              .set('hours', 0)
+              .set('minutes', 0)
+              .set('seconds', 0)
+              .toISOString(),
+          )
         }}
       />
-    </div>
+      <button
+        type="submit"
+        className="h-10 flex gap-x-1 mt-auto p-2 rounded-lg bg-blue-600 hover:bg-blue-700"
+      >
+        <Plus size={24} />
+        Adicionar
+      </button>
+    </form>
   )
 }

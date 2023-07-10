@@ -17,9 +17,10 @@ export async function POST(request: NextRequest) {
     }
 
     const day = new Date()
+    console.log(day.getDate())
     let statusInvoice = ''
 
-    if (dueDate >= day.getDate()) {
+    if (dueDate <= day.getDate()) {
       statusInvoice = 'closed'
     } else {
       statusInvoice = 'open'

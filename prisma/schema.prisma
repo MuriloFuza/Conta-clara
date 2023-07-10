@@ -31,11 +31,12 @@ model Card {
 
 model MonthlyExpenses {
   id              String   @id @unique @default(uuid())
-  descrition      String
+  description     String
   installments    Int
   value           Int
   monthlyInterest Float
   initialMonth    DateTime @default(now())
+  payment         Boolean  @default(false)
   Card            Card     @relation(fields: [cardId], references: [id])
   cardId          String
 }
