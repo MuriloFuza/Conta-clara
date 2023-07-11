@@ -23,7 +23,7 @@ export const SelectKeyInput: FC<ISelectInputProps> = ({
     <label>{label}</label>
     <Select.Root onValueChange={onChange} value={selectedValue}>
       <Select.Trigger
-        className="flex justify-between rounded-lg border border-gray-300 bg-gray-200 py-2 px-4 text-gray-700 w-f"
+        className="flex justify-between rounded-lg border-0 py-2 px-4 bg-neutral-950 text-gray-500 w-f"
         aria-label="Food"
       >
         <Select.Value placeholder={placeholder} />
@@ -34,7 +34,7 @@ export const SelectKeyInput: FC<ISelectInputProps> = ({
       <Select.Portal>
         <Select.Content
           position="popper"
-          className="p-2 bg-white border mt-2 w-[--radix-select-trigger-width] max-h-[16rem]"
+          className="p-2 bg-neutral-900 border mt-2 w-[--radix-select-trigger-width] max-h-[16rem]"
         >
           <Select.ScrollUpButton className="flex items-center justify-center h-[25px] bg-white text-violet11 cursor-default">
             <ChevronUp />
@@ -44,7 +44,7 @@ export const SelectKeyInput: FC<ISelectInputProps> = ({
               <Select.Item
                 key={item}
                 value={item}
-                className={`text-sm text-gray-600 rounded-lg flex items-center h-7 pr-10 pl-7 relative select-none data-[highlighted]:outline-none data-[highlighted]:bg-blue-200/30 data-[highlighted]:text-black`}
+                className={`text-sm text-gray-400 rounded-lg flex items-center h-7 pr-10 pl-7 relative select-none data-[highlighted]:outline-none data-[highlighted]:bg-white data-[highlighted]:text-black`}
               >
                 <Select.ItemText>{values[item]}</Select.ItemText>
                 <Select.ItemIndicator className="absolute left-0 w-[25px] inline-flex items-center justify-center">

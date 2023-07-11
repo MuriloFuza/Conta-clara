@@ -21,7 +21,7 @@ export default function ExpensesTable({
 }: ExpensesTableProps) {
   const payExpense = async (expenseId: string) => {
     api
-      .put('/card/expense/pay', {
+      .put('/card/expenses/pay', {
         expenseId,
       })
       .then(() => {
@@ -71,7 +71,7 @@ export default function ExpensesTable({
                   {Intl.NumberFormat('pt-br', {
                     style: 'currency',
                     currency: 'BRL',
-                  }).format(expense.value)}
+                  }).format(expense.value / 100)}
                 </td>
                 <td className="w-1/5 p-1 pl-6 leading-relaxed ">
                   {new Date(expense.initialMonth).getDate()}

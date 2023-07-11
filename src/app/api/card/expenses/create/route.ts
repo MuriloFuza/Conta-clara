@@ -11,6 +11,15 @@ export async function POST(request: NextResponse) {
     installments,
   } = await request.json()
 
+  console.log(
+    cardId,
+    description,
+    value,
+    initialMonth,
+    monthlyInterest,
+    installments,
+  )
+
   try {
     await db.monthlyExpenses.create({
       data: {
@@ -20,7 +29,7 @@ export async function POST(request: NextResponse) {
           },
         },
         description,
-        value: Number(value),
+        value: Number(value.replace(/[R$,]/g, '')),
         initialMonth,
         monthlyInterest: Number(monthlyInterest),
         installments: Number(installments),

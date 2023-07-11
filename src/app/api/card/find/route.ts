@@ -26,10 +26,13 @@ export async function GET(request: NextRequest) {
 
           let finalValue = 0
           monthlyExpenses.forEach((expense) => {
-            finalValue += expense.value
+            if (expense.payment !== true) {
+              finalValue += expense.value
+            }
           })
 
           const day = new Date()
+          console.log(finalValue)
 
           listReturn.push({
             id: card.id,

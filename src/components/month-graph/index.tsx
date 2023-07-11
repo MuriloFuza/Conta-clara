@@ -14,17 +14,44 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import { SelectKeyInput } from '../select-key'
 
 interface MonthGraphInfo {
   day: Date
-  credit: number
-  debit: number
+  credit?: number
+  debit?: number
+  card?: number
 }
 
 export function MonthGraph() {
-  const [selectedMonth, setSelectedMonth] = useState(6)
+  const currentMonthName = format(new Date(), 'LLLL', { locale: ptBR })
+  const monthList = [
+    'Janeiro',
+    'Fevereiro',
+    'Março',
+    'Abril',
+    'Maio',
+    'Junho',
+    'Julho',
+    'Agosto',
+    'Setembro',
+    'Outubro',
+    'Novembro',
+    'Dezembro',
+  ]
+  const [selectedMonth, setSelectedMonth] = useState(
+    monthList.findIndex(
+      (mon) =>
+        mon ===
+        currentMonthName.charAt(0).toUpperCase() + currentMonthName.slice(1),
+    ) + 1,
+  )
   const [monthData, setMonthData] = useState<MonthGraphInfo[]>([])
   const { userId } = useAuth()
+  const [cards, setCards] = useState<{
+    [key: string]: string
+  }>({})
+  const [card, setCard] = useState('')
 
   const fetchTransactions = useCallback(() => {
     api
@@ -53,8 +80,10 @@ export function MonthGraph() {
               if (existingDayIndex !== -1) {
                 // If a record for the day already exists, update the credit and debit values
                 if (transaction.type === 'credit') {
+                  /* @ts-ignore */
                   accumulator[existingDayIndex].credit += transaction.value
                 } else if (transaction.type === 'debit') {
+                  /* @ts-ignore */
                   accumulator[existingDayIndex].debit += transaction.value
                 }
               } else {
@@ -63,6 +92,7 @@ export function MonthGraph() {
                   day: transaction.transaction_date,
                   credit: transaction.type === 'credit' ? transaction.value : 0,
                   debit: transaction.type === 'debit' ? transaction.value : 0,
+                  card: 0,
                 }
                 accumulator.push(newEntry)
               }
@@ -71,19 +101,154 @@ export function MonthGraph() {
             },
             [] as MonthGraphInfo[],
           )
-
           setMonthData(newMonthData)
         }
       })
   }, [selectedMonth])
 
+  const fetchExpenses = (userId: string, card: string) => {
+    if (card !== '') {
+      api
+        .get('/card/expenses/find', {
+          params: {
+            userId,
+            cardId: card,
+          },
+        })
+        .then((response) => {
+          const { data } = response
+          console.log(monthData)
+          if (data.status === 'success') {
+            const zeroCards = monthData.map((item) => ({
+              ...item,
+              card: 0,
+            }))
+            setMonthData(zeroCards)
+
+            const newMonthData = data.object.reduce(
+              (
+                accumulator: MonthGraphInfo[],
+                expense: { initialMonth: string | number | Date; value: any },
+              ) => {
+                const existingDayIndex = accumulator.findIndex(
+                  (item: { day: string | number | Date }) =>
+                    isSameDay(
+                      new Date(item.day),
+                      new Date(expense.initialMonth),
+                    ),
+                )
+
+                if (existingDayIndex !== -1) {
+                  // If a record for the day already exists, update the credit and debit values
+                  accumulator[existingDayIndex].card += expense.value
+                } else {
+                  // If no record for the day exists, create a new entry
+                  const newEntry: MonthGraphInfo = {
+                    /* @ts-ignore */
+                    day: new Date(expense.initialMonth).toISOString(),
+                    card: expense.value,
+                  }
+                  accumulator.push(newEntry)
+                }
+
+                return accumulator
+              },
+              [] as MonthGraphInfo[],
+            )
+
+            const updatedMonthData = [...monthData]
+            /* @ts-ignore */
+            newMonthData.forEach((newExpense) => {
+              const existingDayIndex = updatedMonthData.findIndex((item) =>
+                isSameDay(new Date(item.day), new Date(newExpense.day)),
+              )
+
+              if (existingDayIndex !== -1) {
+                // If a record for the day already exists, update the card value
+                if (
+                  typeof updatedMonthData[existingDayIndex].card !== 'number'
+                ) {
+                  updatedMonthData[existingDayIndex].card = newExpense.card
+                } else {
+                  updatedMonthData[existingDayIndex].card += newExpense.card
+                }
+              } else {
+                // If no record for the day exists, add a new entry
+                if (newExpense.debit || newExpense.credit) {
+                  const newEntry: MonthGraphInfo = {
+                    day: newExpense.day,
+                    card: newExpense.card,
+                  }
+                  updatedMonthData.push(newEntry)
+                } else {
+                  const newEntry: MonthGraphInfo = {
+                    day: newExpense.day,
+                    credit: 0,
+                    debit: 0,
+                    card: newExpense.card,
+                  }
+                  updatedMonthData.push(newEntry)
+                }
+              }
+            })
+            const sortedMonthData = [...updatedMonthData].sort((a, b) => {
+              const dateA = new Date(a.day).getTime()
+              const dateB = new Date(b.day).getTime()
+              return dateB - dateA
+            })
+            setMonthData(sortedMonthData)
+          }
+        })
+    }
+  }
+
+  useEffect(() => {
+    api
+      .get('/card/find', {
+        params: {
+          userId,
+        },
+      })
+      .then((cardsResponse) => {
+        const {
+          data: { data },
+        } = cardsResponse
+
+        if (data.status === 'success') {
+          let list = {}
+
+          data.object.forEach((item: { id: string; name: string }) => {
+            list = {
+              ...list,
+              ...{ [item.id]: item.name },
+            }
+          })
+          setCards(list)
+        }
+      })
+      .catch(() => setCards({}))
+  }, [])
+
   useEffect(() => {
     fetchTransactions()
   }, [fetchTransactions])
 
+  useEffect(() => {
+    fetchExpenses(userId || '', card)
+  }, [card])
+
   return (
     <div className="space-y-2">
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1 gap-y-4">
+        {Object.keys(cards).length > 0 ? (
+          <SelectKeyInput
+            label="Cartões"
+            placeholder="cartão"
+            selectedValue={card}
+            values={cards}
+            onChange={(val) => setCard(val)}
+          />
+        ) : null}
         <select
           className="h-10 capitalize focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-900 focus:ring-blue-600 rounded-lg p-2 pr-8 border-0 bg-neutral-950 outline-none"
           value={selectedMonth}
@@ -110,6 +275,7 @@ export function MonthGraph() {
           />
           <Line type="monotone" dataKey="debit" stroke="#f87171" />
           <Line type="monotone" dataKey="credit" stroke="#4ade80" />
+          <Line type="monotone" dataKey="card" stroke="#2c2cdb" />
           <Tooltip
             contentStyle={{
               backgroundColor: '#171717',
@@ -120,7 +286,11 @@ export function MonthGraph() {
                   style: 'currency',
                   currency: 'BRL',
                 }).format(Number(value) / 100),
-                name === 'debit' ? 'Débito' : 'Crédito',
+                name === 'debit'
+                  ? 'Débito'
+                  : name === 'credit'
+                  ? 'Crédito'
+                  : 'Cartão',
               ]
             }}
             labelFormatter={(label) => {
@@ -129,7 +299,11 @@ export function MonthGraph() {
           />
           <Legend
             formatter={(label) => {
-              return label === 'debit' ? 'Débito' : 'Crédito'
+              return label === 'debit'
+                ? 'Débito'
+                : label === 'credit'
+                ? 'Crédito'
+                : 'Cartão'
             }}
           />
         </LineChart>

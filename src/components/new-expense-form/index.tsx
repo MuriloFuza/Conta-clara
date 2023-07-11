@@ -9,6 +9,7 @@ import { RangeDatePicker } from '../date-picker'
 import dayjs from 'dayjs'
 import { Plus } from 'lucide-react'
 import { api } from '@/libs/api'
+import { useState } from 'react'
 
 interface ExpensesFormProps {
   fetchExpenses: (userId: string, card: string) => void
@@ -40,6 +41,26 @@ export default function ExpensesForm({
     fetchExpenses(userId, card)
   }
 
+  const [formattedValue, setFormattedValue] = useState('')
+
+  const handleChangeMoney = (event: { target: { value: any } }) => {
+    const { value } = event.target
+    const cleanedValue = value.replace(/\D/g, '') // Remove caracteres não numéricos
+    const formatted = formatCurrency(cleanedValue)
+    setFormattedValue(formatted)
+  }
+
+  const formatCurrency = (value: any) => {
+    const options = {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }
+    const amount = Number(value) / 100
+    return amount.toLocaleString('pt-BR', options)
+  }
+
   return (
     <form
       onSubmit={handleSubmit(handleCreateExpense)}
@@ -59,10 +80,12 @@ export default function ExpensesForm({
         {...register('installments')}
       />
       <Input
+        {...register('value')}
         label="Valor"
         error={errors.value}
         placeholder="R$ 0,00"
-        {...register('value')}
+        value={formattedValue}
+        onChange={handleChangeMoney}
       />
       <Input
         label="% Juros"

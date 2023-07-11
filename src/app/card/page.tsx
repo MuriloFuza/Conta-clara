@@ -35,7 +35,6 @@ export default function CreditCard() {
         } = transactionResponse
 
         if (data.status === 'success') {
-          console.log(data.object)
           setCards(data.object)
           setFetchStatus('success')
         } else {
