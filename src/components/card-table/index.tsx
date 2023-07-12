@@ -69,13 +69,14 @@ export default function CardTable({ cards, fetchStatus }: CardTableProps) {
                 </td>
                 <td
                   className={`p-1 pr-6 leading-relaxed text-center font-semibold uppercase ${
-                    card.statusInvoice === 'open' ||
-                    card.statusInvoice === 'paid'
-                      ? 'text-green-600'
-                      : 'text-red-600'
+                    card.availableLimit < 0 || card.statusInvoice === 'closed'
+                      ? 'text-red-600'
+                      : 'text-green-600'
                   }`}
                 >
-                  {card.statusInvoice === 'open'
+                  {card.availableLimit < 0
+                    ? 'Limite Estourado'
+                    : card.statusInvoice === 'open'
                     ? 'Aberta'
                     : card.statusInvoice === 'paid'
                     ? 'Paga'

@@ -64,6 +64,7 @@ export default function Home() {
         }
       })
       .catch(() => setTransactions([]))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [month, order, mode])
 
   useEffect(() => {
@@ -71,13 +72,13 @@ export default function Home() {
   }, [fetchTransactions])
 
   return (
-    <div className="flex flex-1 flex-col space-y-2 overflow-hidden">
+    <div className="flex flex-1 flex-col space-y-2 overflow-auto md:overflow-hidden">
       <NewTransactionForm
         fetchTransactions={fetchTransactions}
         userId={userId || ''}
       />
 
-      <div className=" flex flex-col gap-x-8">
+      <div className=" flex flex-col gap-x-8 ">
         <div className="flex flex-col">
           <h1 className="capitalize font-bold text-xl">{month}</h1>
 
@@ -97,7 +98,7 @@ export default function Home() {
 
         <div className="pt-3 flex flex-col">
           <h1 className="capitalize font-bold text-xl">Filtragem</h1>
-          <div className="flex flex-row  gap-x-3">
+          <div className="flex flex-col md:flex-row  gap-x-3">
             <SelectInput
               label="Mês"
               placeholder="Mês"

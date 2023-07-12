@@ -44,7 +44,7 @@ export default function ExpensesTable({
   return (
     <div className="flex flex-1 h-full overflow-auto">
       {fetchStatus === true && isLoaded === true ? (
-        <table className="w-full flex-1 border-collapse min-w-[600px] ">
+        <table className="w-full flex-1 border-collapse min-w-[600px]">
           <thead className="sticky top-0">
             <tr>
               <th className="bg-neutral-800 text-left rounded-tl-lg pl-6 leading-7">

@@ -21,7 +21,7 @@ export const SelectInput: FC<ISelectInputProps> = ({
     <label>{label}</label>
     <Select.Root onValueChange={onChange} value={selectedValue}>
       <Select.Trigger
-        className="flex justify-between rounded-lg border border-gray-300 bg-black py-2 px-4 gap-2 text-white w-f"
+        className="flex justify-between rounded-lg border border-gray-300 bg-black py-2 px-4 gap-2 text-white "
         aria-label="Food"
       >
         <Select.Value placeholder={placeholder} />

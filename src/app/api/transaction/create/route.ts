@@ -24,7 +24,6 @@ export async function POST(request: NextRequest) {
       { status: 201 },
     )
   } catch (err) {
-    console.log(err)
     return NextResponse.json(
       {
         data: { status: 'failed', error: err },

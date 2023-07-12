@@ -1,6 +1,6 @@
 import { db } from '@/libs/prisma'
 import { NextRequest, NextResponse } from 'next/server'
-
+export const dynamic = 'force-dynamic'
 export async function GET(request: NextRequest) {
   const userId = request.nextUrl.searchParams.get('userId')
   const cardId = request.nextUrl.searchParams.get('cardId')

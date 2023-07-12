@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/libs/prisma'
-
+export const dynamic = 'force-dynamic'
 export async function PUT(request: NextRequest) {
   const id = request.nextUrl.searchParams.get('id')
   const { description, value, type } = await request.json()
@@ -27,8 +27,6 @@ export async function PUT(request: NextRequest) {
         id: id?.toString(),
       },
     })
-
-    console.log(transaction)
 
     const transactionUpdated = await db.transaction.update({
       where: {

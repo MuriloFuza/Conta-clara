@@ -1,6 +1,6 @@
 import { db } from '@/libs/prisma'
 import { NextRequest, NextResponse } from 'next/server'
-
+export const dynamic = 'force-dynamic'
 export async function DELETE(request: NextRequest) {
   const id = request.nextUrl.searchParams.get('id')
 

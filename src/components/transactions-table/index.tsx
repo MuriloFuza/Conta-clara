@@ -14,7 +14,7 @@ export default function TransactionsTable({
   isLoaded,
 }: TransactionTableProps) {
   return (
-    <div className="flex flex-1 h-full overflow-auto">
+    <div className="flex flex-1 min-h-[40rem] md:min-h-0 h-full overflow-auto">
       {fetchStatus === 'success' && isLoaded === true ? (
         <table className="w-full flex-1 border-collapse min-w-[600px]">
           <thead className="sticky top-0">

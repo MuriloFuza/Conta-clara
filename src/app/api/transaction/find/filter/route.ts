@@ -5,7 +5,7 @@ import { db } from '@/libs/prisma'
 
 type OrderBy = 'asc' | 'desc'
 type SortBy = 'data' | 'value'
-
+export const dynamic = 'force-dynamic'
 export async function GET(request: NextRequest) {
   try {
     const month = request.nextUrl.searchParams.get('month')
@@ -70,7 +70,6 @@ export async function GET(request: NextRequest) {
       )
     }
   } catch (err) {
-    console.log(err)
     return NextResponse.json(
       {
         data: {

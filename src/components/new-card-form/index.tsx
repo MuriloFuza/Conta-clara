@@ -74,7 +74,10 @@ export function NewCardForm({ fetchCards, userId }: NewCardFormProps) {
   }
 
   return (
-    <form className="flex gap-x-2 px-2" onSubmit={handleSubmit}>
+    <form
+      className="flex gap-x-2 px-2 flex-col md:flex-row"
+      onSubmit={handleSubmit}
+    >
       <div className="flex flex-col gap-1 flex-1">
         <label>Nome</label>
         <input

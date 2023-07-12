@@ -1,20 +1,22 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 
 import { api } from '@/libs/api'
 import { useAuth } from '@clerk/nextjs'
 import { format, isSameDay } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import dynamic from 'next/dynamic'
 import { useCallback, useEffect, useState } from 'react'
-import {
-  Legend,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts'
-import { SelectKeyInput } from '../select-key'
+
+const SelectKeyInput = dynamic(
+  () => import('../select-key').then((mod) => mod.SelectKeyInput),
+  { ssr: false },
+)
+
+const Graph = dynamic(
+  () => import('../responsive-container-graph').then((mod) => mod.default),
+  { ssr: false },
+)
 
 interface MonthGraphInfo {
   day: Date
@@ -117,13 +119,11 @@ export function MonthGraph() {
         })
         .then((response) => {
           const { data } = response
-          console.log(monthData)
           if (data.status === 'success') {
-            const zeroCards = monthData.map((item) => ({
+            const resetMonthData: MonthGraphInfo[] = monthData.map((item) => ({
               ...item,
               card: 0,
             }))
-            setMonthData(zeroCards)
 
             const newMonthData = data.object.reduce(
               (
@@ -156,7 +156,7 @@ export function MonthGraph() {
               [] as MonthGraphInfo[],
             )
 
-            const updatedMonthData = [...monthData]
+            const updatedMonthData = [...resetMonthData]
             /* @ts-ignore */
             newMonthData.forEach((newExpense) => {
               const existingDayIndex = updatedMonthData.findIndex((item) =>
@@ -261,53 +261,7 @@ export function MonthGraph() {
           ))}
         </select>
       </div>
-      <ResponsiveContainer width="100%" height={350}>
-        <LineChart data={monthData}>
-          {/* @ts-ignore */}
-          <XAxis
-            dataKey="day"
-            tickFormatter={(value) =>
-              format(new Date(value), 'dd', { locale: ptBR })
-            }
-          />
-          <YAxis
-            tickFormatter={(value) => (value / 100) as unknown as string}
-          />
-          <Line type="monotone" dataKey="debit" stroke="#f87171" />
-          <Line type="monotone" dataKey="credit" stroke="#4ade80" />
-          <Line type="monotone" dataKey="card" stroke="#2c2cdb" />
-          <Tooltip
-            contentStyle={{
-              backgroundColor: '#171717',
-            }}
-            formatter={(value, name, props) => {
-              return [
-                Intl.NumberFormat('pt-br', {
-                  style: 'currency',
-                  currency: 'BRL',
-                }).format(Number(value) / 100),
-                name === 'debit'
-                  ? 'Débito'
-                  : name === 'credit'
-                  ? 'Crédito'
-                  : 'Cartão',
-              ]
-            }}
-            labelFormatter={(label) => {
-              return format(new Date(label), "dd 'de' LLLL", { locale: ptBR })
-            }}
-          />
-          <Legend
-            formatter={(label) => {
-              return label === 'debit'
-                ? 'Débito'
-                : label === 'credit'
-                ? 'Crédito'
-                : 'Cartão'
-            }}
-          />
-        </LineChart>
-      </ResponsiveContainer>
+      <Graph monthData={monthData} />
     </div>
   )
 }

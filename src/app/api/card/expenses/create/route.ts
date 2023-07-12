@@ -1,7 +1,7 @@
 import { db } from '@/libs/prisma'
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
-export async function POST(request: NextResponse) {
+export async function POST(request: NextRequest) {
   const {
     cardId,
     description,
@@ -10,15 +10,6 @@ export async function POST(request: NextResponse) {
     monthlyInterest,
     installments,
   } = await request.json()
-
-  console.log(
-    cardId,
-    description,
-    value,
-    initialMonth,
-    monthlyInterest,
-    installments,
-  )
 
   try {
     await db.monthlyExpenses.create({

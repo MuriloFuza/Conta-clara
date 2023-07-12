@@ -1,11 +1,22 @@
 'use client'
-import ExpensesTable from '@/components/expenses-table'
-import ExpensesForm from '@/components/new-expense-form'
-import { SelectKeyInput } from '@/components/select-key'
 import { api } from '@/libs/api'
 import { useAuth } from '@clerk/nextjs'
 import { MonthlyExpenses } from '@prisma/client'
+import dynamic from 'next/dynamic'
 import { useEffect, useState } from 'react'
+const ExpensesForm = dynamic(
+  () => import('@/components/new-expense-form').then((mod) => mod.default),
+  { ssr: false },
+)
+const ExpensesTable = dynamic(
+  () => import('@/components/expenses-table').then((mod) => mod.default),
+  { ssr: false },
+)
+
+const SelectKeyInput = dynamic(
+  () => import('@/components/select-key').then((mod) => mod.SelectKeyInput),
+  { ssr: false },
+)
 
 export default function Expenses() {
   const { userId, isLoaded } = useAuth()
@@ -46,7 +57,6 @@ export default function Expenses() {
           data: { data },
         } = cardsResponse
 
-        console.log(data.object)
         if (data.status === 'success') {
           let list = {}
 
@@ -60,15 +70,17 @@ export default function Expenses() {
         }
       })
       .catch(() => setCards({}))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Load Expenses
   useEffect(() => {
     fetchExpenses(userId || '', card)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [card])
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 overflow-auto md:overflow-hidden">
       <h1 className="capitalize font-bold text-xl">Fatura dos Cartões</h1>
       <div className="flex flex-col gap-1">
         <SelectKeyInput

@@ -64,7 +64,7 @@ export default function ExpensesForm({
   return (
     <form
       onSubmit={handleSubmit(handleCreateExpense)}
-      className="flex flex-row gap-x-4 "
+      className="flex gap-x-4 flex-col md:flex-row "
     >
       <Input
         label="Descrição"
